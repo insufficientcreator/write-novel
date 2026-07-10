@@ -121,10 +121,17 @@
             height: 100%;
             background-size: cover;
             background-position: center;
-            filter: blur(8px) brightness(0.6); 
-            transform: scale(1.1);
+            transform: scale(1.05);
             z-index: 1;
             display: none;
+        }
+
+        .bg-blur-box::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(26, 26, 26, 0.75);
+            backdrop-filter: blur(10px);
         }
 
         .text-card {
@@ -163,7 +170,7 @@
             display: block;
             text-align: justify;
             margin-bottom: 0px; 
-            min-height: 1.9em; 
+            min-height: 1.9em;
         }
 
         .main-image-box {
@@ -257,7 +264,7 @@
         <div class="form-group">
             <label for="input-copy">출처 표기</label>
             <input type="text" id="input-copy" value="변변찮은 창조주" placeholder="없을 시 공란">
-            <small style="color: #aaa; font-size: 0.75rem; margin-top: 2px;">* 글자를 모두 지우면 다운로드 시 보이지 않습니다.</small>
+            <small style="color: #aaa; font-size: 0.75rem; margin-top: 2px;">* 비워두면 다운로드 시 보이지 않습니다.</small>
         </div>
         
         <button class="btn-save" onclick="saveAsImage()">이미지 다운로드</button>
@@ -313,12 +320,10 @@
             viewImage.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) scale(${currentZoom})`;
         }
 
-
         function renderContent() {
             const lines = inputText.value.split('\n');
             let htmlResult = '';
             lines.forEach(line => {
-           
                 htmlResult += `<span class="text-line">${line}</span>`;
             });
             viewContent.innerHTML = htmlResult;
@@ -385,7 +390,6 @@
             }
         });
 
-  
         renderContent();
 
         function saveAsImage() {
