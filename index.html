@@ -113,25 +113,24 @@
             flex-shrink: 0;
         }
         
-        .bg-blur-box {
+        #bg-canvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            transform: scale(1.05);
+            top: 50%;
+            left: 50%;
+            width: 110%;
+            height: 110%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
             z-index: 1;
             display: none;
         }
 
-        .bg-blur-box::after {
-            content: '';
+        .bg-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(26, 26, 26, 0.75);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.15); 
+            z-index: 2;
+            display: none;
         }
 
         .text-card {
@@ -209,10 +208,11 @@
             bottom: 25px;
             right: 120px;
             font-size: 11px;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.8);
             z-index: 3;
             font-family: sans-serif;
             letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
     </style>
 </head>
@@ -264,7 +264,7 @@
         <div class="form-group">
             <label for="input-copy">출처 표기</label>
             <input type="text" id="input-copy" value="변변찮은 창조주" placeholder="없을 시 공란">
-            <small style="color: #aaa; font-size: 0.75rem; margin-top: 2px;">* 비워두면 다운로드 시 보이지 않습니다.</small>
+            <small style="color: #aaa; font-size: 0.75rem; margin-top: 2px;">* 글자를 모두 지우면 다운로드 시 보이지 않습니다.</small>
         </div>
         
         <button class="btn-save" onclick="saveAsImage()">이미지 다운로드</button>
@@ -272,7 +272,8 @@
 
     <div class="preview-container">
         <div id="capture-area">
-            <div class="bg-blur-box" id="view-bg"></div>
+            <canvas id="bg-canvas"></canvas>
+            <div class="bg-overlay" id="view-overlay"></div>
             
             <div class="text-card" id="text-card-zone">
                 <div class="card-title" id="view-title">제목</div>
@@ -308,7 +309,8 @@
         const viewContent = document.getElementById('view-content');
         const textCardZone = document.getElementById('text-card-zone');
         const viewImage = document.getElementById('view-image');
-        const viewBg = document.getElementById('view-bg');
+        const bgCanvas = document.getElementById('bg-canvas');
+        const viewOverlay = document.getElementById('view-overlay');
         const viewCopy = document.getElementById('view-copy');
         const noImgTxt = document.getElementById('no-img-txt');
 
@@ -327,6 +329,23 @@
                 htmlResult += `<span class="text-line">${line}</span>`;
             });
             viewContent.innerHTML = htmlResult;
+        }
+
+        function drawBlurredBackground(imgElement) {
+            const ctx = bgCanvas.getContext('2d');
+            bgCanvas.width = 1000;
+            bgCanvas.height = 800;
+            
+            ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            ctx.imageSmoothingEnabled = true;
+            
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = 40; 
+            tempCanvas.height = 32;
+            tempCtx.drawImage(imgElement, 0, 0, tempCanvas.width, tempCanvas.height);
+            
+            ctx.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, bgCanvas.width, bgCanvas.height);
         }
 
         inputTitle.addEventListener('input', () => { viewTitle.textContent = inputTitle.value; });
@@ -370,10 +389,16 @@
                 reader.onload = function(event) {
                     noImgTxt.style.display = 'none';
                     viewImage.style.display = 'block'; 
-                    viewBg.style.display = 'block'; 
+                    bgCanvas.style.display = 'block'; 
+                    viewOverlay.style.display = 'block';
                     
                     viewImage.src = event.target.result;
-                    viewBg.style.backgroundImage = `url('${event.target.result}')`;
+                    
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function() {
+                        drawBlurredBackground(img);
+                    }
 
                     currentZoom = 1;
                     currentX = 0;
