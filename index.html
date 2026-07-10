@@ -100,6 +100,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             flex-shrink: 0;
         }
+        
         .bg-blur-box {
             position: absolute;
             top: 0;
@@ -108,12 +109,11 @@
             height: 100%;
             background-size: cover;
             background-position: center;
-            filter: blur(20px) brightness(0.6);
+            filter: blur(8px) brightness(0.6); 
             transform: scale(1.1);
             z-index: 1;
             display: none;
         }
-        
 
         .text-card {
             position: absolute;
@@ -164,13 +164,15 @@
             color: #555;
             font-size: 0.9rem;
         }
+        
+ 
         .main-image-box img {
-            width: 100%;
-            height: 100%;
+            width: 130%;
+            height: 130%;
             object-fit: cover;
-            position: relative;
-            top: 0px;
-            left: 0px;
+            position: absolute;
+            top: -15%;
+            left: -15%;
             display: none;
         }
         
@@ -218,17 +220,17 @@
 
         <div class="form-group">
             <label>이미지 좌우 위치 조절 <span class="range-val" id="val-x">0px</span></label>
-            <input type="range" id="range-x" min="-200" max="200" value="0">
+            <input type="range" id="range-x" min="-400" max="400" value="0">
         </div>
         <div class="form-group">
             <label>이미지 상하 위치 조절 <span class="range-val" id="val-y">0px</span></label>
-            <input type="range" id="range-x-y" min="-200" max="200" value="0">
+            <input type="range" id="range-x-y" min="-400" max="400" value="0">
         </div>
 
         <div class="form-group">
             <label for="input-copy">출처 표기</label>
             <input type="text" id="input-copy" value="변변찮은 창조주" placeholder="없을 시 공란">
-            <small style="color: #aaa; font-size: 0.75rem; margin-top: 2px;">* 글자를 모두 지우면 추출 시 보이지 않습니다.</small>
+            <small style="color: #aaa; font-size: 0.75rem; margin-top: 2px;">* 글자를 모두 지우면 다운로드 시 보이지 않습니다.</small>
         </div>
         
         <button class="btn-save" onclick="saveAsImage()">이미지 다운로드</button>
@@ -237,7 +239,6 @@
     <div class="preview-container">
         <div id="capture-area">
             <div class="bg-blur-box" id="view-bg"></div>
-            
             
             <div class="text-card" id="text-card-zone">
                 <div class="card-title" id="view-title">제목</div>
@@ -273,6 +274,9 @@
         const viewCopy = document.getElementById('view-copy');
         const noImgTxt = document.getElementById('no-img-txt');
 
+        // 기본 130% 스케일 적용 시 중앙 위치 확보를 위한 고정 마진 비율 (-15%)
+        const baseOffset = -15; 
+
         inputTitle.addEventListener('input', () => { viewTitle.textContent = inputTitle.value; });
         inputText.addEventListener('input', () => { viewContent.textContent = inputText.value; });
         
@@ -290,11 +294,11 @@
         });
 
         rangeX.addEventListener('input', () => {
-            viewImage.style.left = rangeX.value + 'px';
+            viewImage.style.left = `calc(${baseOffset}% + ${rangeX.value}px)`;
             valX.textContent = rangeX.value + 'px';
         });
         rangeY.addEventListener('input', () => {
-            viewImage.style.top = rangeY.value + 'px';
+            viewImage.style.top = `calc(${baseOffset}% + ${rangeY.value}px)`;
             valY.textContent = rangeY.value + 'px';
         });
 
@@ -309,6 +313,13 @@
                     
                     viewImage.src = event.target.result;
                     viewBg.style.backgroundImage = `url('${event.target.result}')`;
+
+                    rangeX.value = 0;
+                    rangeY.value = 0;
+                    valX.textContent = '0px';
+                    valY.textContent = '0px';
+                    viewImage.style.left = baseOffset + '%';
+                    viewImage.style.top = baseOffset + '%';
                 }
                 reader.readAsDataURL(file);
             }
