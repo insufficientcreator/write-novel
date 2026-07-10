@@ -113,24 +113,25 @@
             flex-shrink: 0;
         }
         
-        #bg-canvas {
+        .bg-blur-box {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 110%;
-            height: 110%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.05);
             z-index: 1;
             display: none;
         }
 
-        .bg-overlay {
+        .bg-blur-box::after {
+            content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.15); 
-            z-index: 2;
-            display: none;
+            background: rgba(255, 255, 255, 0.3); 
+            backdrop-filter: blur(14px);
         }
 
         .text-card {
@@ -208,11 +209,11 @@
             bottom: 25px;
             right: 120px;
             font-size: 11px;
-            color: rgba(255,255,255,0.8);
+            color: rgba(0, 0, 0, 0.6); 
             z-index: 3;
             font-family: sans-serif;
             letter-spacing: 1px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            font-weight: bold;
         }
     </style>
 </head>
@@ -248,7 +249,7 @@
         </div>
 
         <div class="form-group">
-            <label>이미지 크기 조절 <span class="range-val" id="val-zoom">100%</span></label>
+            <label>이미지 크기 조절 (확대/축소) <span class="range-val" id="val-zoom">100%</span></label>
             <input type="range" id="range-zoom" min="50" max="300" value="100">
         </div>
 
@@ -272,8 +273,7 @@
 
     <div class="preview-container">
         <div id="capture-area">
-            <canvas id="bg-canvas"></canvas>
-            <div class="bg-overlay" id="view-overlay"></div>
+            <div class="bg-blur-box" id="view-bg"></div>
             
             <div class="text-card" id="text-card-zone">
                 <div class="card-title" id="view-title">제목</div>
@@ -309,8 +309,7 @@
         const viewContent = document.getElementById('view-content');
         const textCardZone = document.getElementById('text-card-zone');
         const viewImage = document.getElementById('view-image');
-        const bgCanvas = document.getElementById('bg-canvas');
-        const viewOverlay = document.getElementById('view-overlay');
+        const viewBg = document.getElementById('view-bg');
         const viewCopy = document.getElementById('view-copy');
         const noImgTxt = document.getElementById('no-img-txt');
 
@@ -329,23 +328,6 @@
                 htmlResult += `<span class="text-line">${line}</span>`;
             });
             viewContent.innerHTML = htmlResult;
-        }
-
-        function drawBlurredBackground(imgElement) {
-            const ctx = bgCanvas.getContext('2d');
-            bgCanvas.width = 1000;
-            bgCanvas.height = 800;
-            
-            ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-            ctx.imageSmoothingEnabled = true;
-            
-            const tempCanvas = document.createElement('canvas');
-            const tempCtx = tempCanvas.getContext('2d');
-            tempCanvas.width = 40; 
-            tempCanvas.height = 32;
-            tempCtx.drawImage(imgElement, 0, 0, tempCanvas.width, tempCanvas.height);
-            
-            ctx.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, bgCanvas.width, bgCanvas.height);
         }
 
         inputTitle.addEventListener('input', () => { viewTitle.textContent = inputTitle.value; });
@@ -389,16 +371,10 @@
                 reader.onload = function(event) {
                     noImgTxt.style.display = 'none';
                     viewImage.style.display = 'block'; 
-                    bgCanvas.style.display = 'block'; 
-                    viewOverlay.style.display = 'block';
+                    viewBg.style.display = 'block'; 
                     
                     viewImage.src = event.target.result;
-                    
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = function() {
-                        drawBlurredBackground(img);
-                    }
+                    viewBg.style.backgroundImage = `url('${event.target.result}')`;
 
                     currentZoom = 1;
                     currentX = 0;
