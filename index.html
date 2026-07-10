@@ -155,16 +155,15 @@
             color: #222;
             overflow: hidden;
             text-align: justify; 
-            text-justify: inter-character; 
+            text-justify: inter-character;
             word-break: break-all; 
         }
-        
-        .card-content p {
-            margin-bottom: 20px;
+
+        .card-content .text-line {
+            display: block;
             text-align: justify;
-        }
-        .card-content p:last-child {
-            margin-bottom: 0;
+            margin-bottom: 0px; 
+            min-height: 1.9em; 
         }
 
         .main-image-box {
@@ -314,17 +313,13 @@
             viewImage.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) scale(${currentZoom})`;
         }
 
-   
+
         function renderContent() {
             const lines = inputText.value.split('\n');
             let htmlResult = '';
             lines.forEach(line => {
-
-                if (line.trim() !== '') {
-                    htmlResult += `<p>${line}</p>`;
-                } else {
-                    htmlResult += `<div style="height:15px;"></div>`;
-                }
+           
+                htmlResult += `<span class="text-line">${line}</span>`;
             });
             viewContent.innerHTML = htmlResult;
         }
@@ -390,7 +385,7 @@
             }
         });
 
-     
+  
         renderContent();
 
         function saveAsImage() {
