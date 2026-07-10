@@ -167,12 +167,12 @@
         
         .main-image-box img {
             position: absolute;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            object-fit: none; 
-            max-width: none;
-            max-height: none;
+            transform: translate(-50%, -50%) scale(1); 
             display: none;
         }
         
@@ -219,12 +219,17 @@
         </div>
 
         <div class="form-group">
-            <label>이미지 좌우 구도 조절 <span class="range-val" id="val-x">중앙</span></label>
-            <input type="range" id="range-x" min="-100" max="100" value="0">
+            <label>이미지 크기 조절 (확대/축소) <span class="range-val" id="val-zoom">100%</span></label>
+            <input type="range" id="range-zoom" min="50" max="300" value="100">
+        </div>
+
+        <div class="form-group">
+            <label>이미지 좌우 위치 조절 <span class="range-val" id="val-x">0px</span></label>
+            <input type="range" id="range-x" min="-400" max="400" value="0">
         </div>
         <div class="form-group">
-            <label>이미지 상하 구도 조절 <span class="range-val" id="val-y">중앙</span></label>
-            <input type="range" id="range-x-y" min="-100" max="100" value="0">
+            <label>이미지 상하 위치 조절 <span class="range-val" id="val-y">0px</span></label>
+            <input type="range" id="range-x-y" min="-400" max="400" value="0">
         </div>
 
         <div class="form-group">
@@ -261,8 +266,11 @@
         const inputImage = document.getElementById('input-image');
         const inputCopy = document.getElementById('input-copy');
         
+        const rangeZoom = document.getElementById('range-zoom');
         const rangeX = document.getElementById('range-x');
         const rangeY = document.getElementById('range-x-y');
+        
+        const valZoom = document.getElementById('val-zoom');
         const valX = document.getElementById('val-x');
         const valY = document.getElementById('val-y');
 
@@ -273,6 +281,14 @@
         const viewBg = document.getElementById('view-bg');
         const viewCopy = document.getElementById('view-copy');
         const noImgTxt = document.getElementById('no-img-txt');
+
+        let currentZoom = 1;
+        let currentX = 0;
+        let currentY = 0;
+
+        function updateImageTransform() {
+            viewImage.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) scale(${currentZoom})`;
+        }
 
         inputTitle.addEventListener('input', () => { viewTitle.textContent = inputTitle.value; });
         inputText.addEventListener('input', () => { viewContent.textContent = inputText.value; });
@@ -290,15 +306,22 @@
             viewContent.style.fontFamily = selectedFont;
         });
 
-        rangeX.addEventListener('input', () => {
-            const shiftX = rangeX.value;
-            viewImage.style.left = `calc(50% + ${shiftX}%)`;
-            valX.textContent = shiftX > 0 ? `우측 이동 ${shiftX}%` : shiftX < 0 ? `좌측 이동 ${Math.abs(shiftX)}%` : '중앙';
+        rangeZoom.addEventListener('input', () => {
+            currentZoom = rangeZoom.value / 100;
+            valZoom.textContent = rangeZoom.value + '%';
+            updateImageTransform();
         });
+
+        rangeX.addEventListener('input', () => {
+            currentX = rangeX.value;
+            valX.textContent = rangeX.value + 'px';
+            updateImageTransform();
+        });
+
         rangeY.addEventListener('input', () => {
-            const shiftY = rangeY.value;
-            viewImage.style.top = `calc(50% + ${shiftY}%)`;
-            valY.textContent = shiftY > 0 ? `하단 이동 ${shiftY}%` : shiftY < 0 ? `상단 이동 ${Math.abs(shiftY)}%` : '중앙';
+            currentY = rangeY.value;
+            valY.textContent = rangeY.value + 'px';
+            updateImageTransform();
         });
 
         inputImage.addEventListener('change', (e) => {
@@ -313,12 +336,16 @@
                     viewImage.src = event.target.result;
                     viewBg.style.backgroundImage = `url('${event.target.result}')`;
 
+                    currentZoom = 1;
+                    currentX = 0;
+                    currentY = 0;
+                    rangeZoom.value = 100;
                     rangeX.value = 0;
                     rangeY.value = 0;
-                    valX.textContent = '중앙';
-                    valY.textContent = '중앙';
-                    viewImage.style.left = '50%';
-                    viewImage.style.top = '50%';
+                    valZoom.textContent = '100%';
+                    valX.textContent = '0px';
+                    valY.textContent = '0px';
+                    updateImageTransform();
                 }
                 reader.readAsDataURL(file);
             }
