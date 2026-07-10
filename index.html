@@ -134,20 +134,22 @@
             backdrop-filter: blur(14px); 
         }
 
+
         .text-card {
             position: absolute;
             top: 0;
-            left: 100px;
-            width: 380px;
+            left: 80px;
+            width: 480px;
             height: 100%;
             background-color: #ffffff;
             z-index: 3;
-            padding: 60px 40px 40px 40px;
+            padding: 80px 60px 60px 60px;
             color: #000000;
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 35px;
             font-family: 'KoPubWorldBatang', serif; 
+            box-shadow: 5px 0 25px rgba(0,0,0,0.15);
         }
         
         .card-title {
@@ -176,14 +178,15 @@
 
         .main-image-box {
             position: absolute;
-            top: 180px;
-            right: 120px;
+            top: 50%;                
+            transform: translateY(-50%);
+            right: 60px;           
             width: 360px;
             height: 520px;
             background-color: transparent;
             border: none; 
-            box-shadow: 0 5px 25px rgba(0,0,0,0.35); 
-            z-index: 3;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
+            z-index: 4;     
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -198,6 +201,7 @@
             border-radius: 8px;
         }
         
+        /* 내부 이미지 제어 */
         .main-image-box img {
             position: absolute;
             max-width: 100%;
@@ -205,14 +209,16 @@
             object-fit: contain;
             top: 50%;
             left: 50%;
+            /* 아래 transform은 스크립트의 updateImageTransform 함수에 의해 덮어씌워지므로 구조 유지 */
             transform: translate(-50%, -50%) scale(1); 
             display: none;
         }
         
+        /* [수정] 출처 표기 태그 위치도 우측 이동에 맞춰 소폭 조정 */
         .copyright-tag {
             position: absolute;
             bottom: 25px;
-            right: 120px;
+            right: 60px;
             font-size: 11px;
             color: rgba(0, 0, 0, 0.6); 
             z-index: 3;
