@@ -148,13 +148,14 @@
             line-height: 1.4;
             word-break: keep-all;
         }
+        
         .card-content {
             font-size: 16px;
             line-height: 1.9; 
             white-space: pre-wrap;
             color: #222;
             overflow: hidden;
-            text-align: justify;
+            text-align: justify; 
         }
 
         .main-image-box {
@@ -318,6 +319,7 @@
             textCardZone.style.fontFamily = selectedFont;
             viewTitle.style.fontFamily = selectedFont;
             viewContent.style.fontFamily = selectedFont;
+            viewContent.style.textAlign = 'justify'; 
         });
 
         rangeZoom.addEventListener('input', () => {
