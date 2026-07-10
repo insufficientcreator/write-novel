@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>찬조 글로그 틀</title>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @font-face {
             font-family: 'KoPubWorldBatang';
@@ -156,6 +157,7 @@
             color: #222;
             overflow: hidden;
             text-align: justify; 
+            word-break: break-all;
         }
 
         .main-image-box {
@@ -273,7 +275,6 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         const inputTitle = document.getElementById('input-title');
         const inputText = document.getElementById('input-text');
