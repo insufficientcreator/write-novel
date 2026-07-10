@@ -95,7 +95,7 @@
             width: 1000px;
             height: 800px;
             position: relative;
-            background-color: #555;
+            background-color: #1a1a1a; 
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             flex-shrink: 0;
@@ -111,24 +111,28 @@
             filter: blur(20px) brightness(0.6);
             transform: scale(1.1);
             z-index: 1;
+            display: none; 
         }
+        
         .grid-line-h {
             position: absolute;
             left: 0;
             width: 100%;
             height: 1px;
-            background-color: rgba(255,255,255,0.2);
-            z-index: 2;
+            background-color: rgba(255,255,255,0.25);
+            z-index: 10;
             top: 40px;
+            pointer-events: none;
         }
         .grid-line-v {
             position: absolute;
             top: 0;
             width: 1px;
             height: 100%;
-            background-color: rgba(255,255,255,0.2);
-            z-index: 2;
+            background-color: rgba(255,255,255,0.25);
+            z-index: 10;
             left: 100px;
+            pointer-events: none;
         }
 
         .text-card {
@@ -167,11 +171,18 @@
             right: 120px;
             width: 360px;
             height: 520px;
-            background-color: #222;
+            background-color: #252525; 
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 5px 5px 20px rgba(0,0,0,0.4);
             z-index: 3;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-image-box .no-img-msg {
+            color: #555;
+            font-size: 0.9rem;
         }
         .main-image-box img {
             width: 100%;
@@ -180,6 +191,7 @@
             position: relative;
             top: 0px;
             left: 0px;
+            display: none; 
         }
         
         .copyright-tag {
@@ -244,7 +256,7 @@
 
     <div class="preview-container">
         <div id="capture-area">
-            <div class="bg-blur-box" id="view-bg" style="background-image: url('https://picsum.photos/1000/800');"></div>
+            <div class="bg-blur-box" id="view-bg"></div>
             
             <div class="grid-line-h"></div>
             <div class="grid-line-v"></div>
@@ -255,7 +267,8 @@
             </div>
             
             <div class="main-image-box">
-                <img id="view-image" src="https://picsum.photos/1000/800" alt="그림">
+                <span class="no-img-msg" id="no-img-txt">그림을 첨부해주세요.</span>
+                <img id="view-image" src="" alt="그림">
             </div>
             
             <div class="copyright-tag" id="view-copy">© 변변찮은 창조주</div>
@@ -280,6 +293,7 @@
         const viewImage = document.getElementById('view-image');
         const viewBg = document.getElementById('view-bg');
         const viewCopy = document.getElementById('view-copy');
+        const noImgTxt = document.getElementById('no-img-txt');
 
         inputTitle.addEventListener('input', () => { viewTitle.textContent = inputTitle.value; });
         inputText.addEventListener('input', () => { viewContent.textContent = inputText.value; });
@@ -306,11 +320,16 @@
             valY.textContent = rangeY.value + 'px';
         });
 
+        // 그림 첨부 시 처리
         inputImage.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
+                    noImgTxt.style.display = 'none'; 
+                    viewImage.style.display = 'block'; 
+                    viewBg.style.display = 'block';
+                    
                     viewImage.src = event.target.result;
                     viewBg.style.backgroundImage = `url('${event.target.result}')`;
                 }
