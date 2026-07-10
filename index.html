@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>찬조 글로그 틀</title>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @font-face {
             font-family: 'KoPubWorldBatang';
@@ -153,11 +152,19 @@
         .card-content {
             font-size: 16px;
             line-height: 1.9; 
-            white-space: pre-wrap;
             color: #222;
             overflow: hidden;
             text-align: justify; 
-            word-break: break-all;
+            text-justify: inter-character;
+            word-break: break-all; 
+        }
+        
+        .card-content p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        .card-content p:last-child {
+            margin-bottom: 0;
         }
 
         .main-image-box {
@@ -215,7 +222,7 @@
         
         <div class="form-group">
             <label for="input-text">본문</label>
-            <textarea id="input-text">본문 내용을 입력해주세요.</textarea>
+            <textarea id="input-text"본문을 입력해주세요.</textarea>
         </div>
 
         <div class="form-group">
@@ -263,7 +270,7 @@
             
             <div class="text-card" id="text-card-zone">
                 <div class="card-title" id="view-title">제목</div>
-                <div class="card-content" id="view-content">본문 내용을 입력해주세요.</div>
+                <div class="card-content" id="view-content"></div>
             </div>
             
             <div class="main-image-box">
@@ -275,6 +282,7 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         const inputTitle = document.getElementById('input-title');
         const inputText = document.getElementById('input-text');
@@ -306,8 +314,21 @@
             viewImage.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) scale(${currentZoom})`;
         }
 
+        function renderContent() {
+            const lines = inputText.value.split('\n');
+            let htmlResult = '';
+            lines.forEach(line => {
+                if (line.trim() !== '') {
+                    htmlResult += `<p>${line}</p>`;
+                } else {
+                    htmlResult += `<div style="height:15px;"></div>`; // 빈 줄 거리 유지
+                }
+            });
+            viewContent.innerHTML = htmlResult;
+        }
+
         inputTitle.addEventListener('input', () => { viewTitle.textContent = inputTitle.value; });
-        inputText.addEventListener('input', () => { viewContent.textContent = inputText.value; });
+        inputText.addEventListener('input', renderContent);
         
         inputCopy.addEventListener('input', () => {
             const val = inputCopy.value.trim();
@@ -320,7 +341,6 @@
             textCardZone.style.fontFamily = selectedFont;
             viewTitle.style.fontFamily = selectedFont;
             viewContent.style.fontFamily = selectedFont;
-            viewContent.style.textAlign = 'justify'; 
         });
 
         rangeZoom.addEventListener('input', () => {
@@ -367,6 +387,8 @@
                 reader.readAsDataURL(file);
             }
         });
+
+        renderContent();
 
         function saveAsImage() {
             const captureArea = document.getElementById('capture-area');
