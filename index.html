@@ -165,14 +165,14 @@
             font-size: 0.9rem;
         }
         
- 
         .main-image-box img {
-            width: 130%;
-            height: 130%;
-            object-fit: cover;
             position: absolute;
-            top: -15%;
-            left: -15%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: none; 
+            max-width: none;
+            max-height: none;
             display: none;
         }
         
@@ -219,12 +219,12 @@
         </div>
 
         <div class="form-group">
-            <label>이미지 좌우 위치 조절 <span class="range-val" id="val-x">0px</span></label>
-            <input type="range" id="range-x" min="-400" max="400" value="0">
+            <label>이미지 좌우 구도 조절 <span class="range-val" id="val-x">중앙</span></label>
+            <input type="range" id="range-x" min="-100" max="100" value="0">
         </div>
         <div class="form-group">
-            <label>이미지 상하 위치 조절 <span class="range-val" id="val-y">0px</span></label>
-            <input type="range" id="range-x-y" min="-400" max="400" value="0">
+            <label>이미지 상하 구도 조절 <span class="range-val" id="val-y">중앙</span></label>
+            <input type="range" id="range-x-y" min="-100" max="100" value="0">
         </div>
 
         <div class="form-group">
@@ -274,9 +274,6 @@
         const viewCopy = document.getElementById('view-copy');
         const noImgTxt = document.getElementById('no-img-txt');
 
-        // 기본 130% 스케일 적용 시 중앙 위치 확보를 위한 고정 마진 비율 (-15%)
-        const baseOffset = -15; 
-
         inputTitle.addEventListener('input', () => { viewTitle.textContent = inputTitle.value; });
         inputText.addEventListener('input', () => { viewContent.textContent = inputText.value; });
         
@@ -294,12 +291,14 @@
         });
 
         rangeX.addEventListener('input', () => {
-            viewImage.style.left = `calc(${baseOffset}% + ${rangeX.value}px)`;
-            valX.textContent = rangeX.value + 'px';
+            const shiftX = rangeX.value;
+            viewImage.style.left = `calc(50% + ${shiftX}%)`;
+            valX.textContent = shiftX > 0 ? `우측 이동 ${shiftX}%` : shiftX < 0 ? `좌측 이동 ${Math.abs(shiftX)}%` : '중앙';
         });
         rangeY.addEventListener('input', () => {
-            viewImage.style.top = `calc(${baseOffset}% + ${rangeY.value}px)`;
-            valY.textContent = rangeY.value + 'px';
+            const shiftY = rangeY.value;
+            viewImage.style.top = `calc(50% + ${shiftY}%)`;
+            valY.textContent = shiftY > 0 ? `하단 이동 ${shiftY}%` : shiftY < 0 ? `상단 이동 ${Math.abs(shiftY)}%` : '중앙';
         });
 
         inputImage.addEventListener('change', (e) => {
@@ -316,10 +315,10 @@
 
                     rangeX.value = 0;
                     rangeY.value = 0;
-                    valX.textContent = '0px';
-                    valY.textContent = '0px';
-                    viewImage.style.left = baseOffset + '%';
-                    viewImage.style.top = baseOffset + '%';
+                    valX.textContent = '중앙';
+                    valY.textContent = '중앙';
+                    viewImage.style.left = '50%';
+                    viewImage.style.top = '50%';
                 }
                 reader.readAsDataURL(file);
             }
