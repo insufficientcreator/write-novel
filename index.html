@@ -155,7 +155,7 @@
             color: #222;
             overflow: hidden;
             text-align: justify; 
-            text-justify: inter-character;
+            text-justify: inter-character; 
             word-break: break-all; 
         }
         
@@ -222,7 +222,7 @@
         
         <div class="form-group">
             <label for="input-text">본문</label>
-            <textarea id="input-text"본문을 입력해주세요.</textarea>
+            <textarea id="input-text">광활한 우주 앞 한낱 인간은 한없이 미시적인 존재였다.</textarea>
         </div>
 
         <div class="form-group">
@@ -314,14 +314,16 @@
             viewImage.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) scale(${currentZoom})`;
         }
 
+   
         function renderContent() {
             const lines = inputText.value.split('\n');
             let htmlResult = '';
             lines.forEach(line => {
+
                 if (line.trim() !== '') {
                     htmlResult += `<p>${line}</p>`;
                 } else {
-                    htmlResult += `<div style="height:15px;"></div>`; // 빈 줄 거리 유지
+                    htmlResult += `<div style="height:15px;"></div>`;
                 }
             });
             viewContent.innerHTML = htmlResult;
@@ -388,6 +390,7 @@
             }
         });
 
+     
         renderContent();
 
         function saveAsImage() {
